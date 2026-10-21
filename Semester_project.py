@@ -2,6 +2,17 @@
 
 import Draw
 import time
+import argparse
+
+def parse_arguments():
+    parser = argparse.ArgumentParser(description="2D Physics Collision Simulation")
+    parser.add_argument("--m1", type=float, help="Mass of particle 1")
+    parser.add_argument("--v1", type=float, help="Velocity of particle 1")
+    parser.add_argument("--m2", type=float, help="Mass of particle 2")
+    parser.add_argument("--v2", type=float, help="Velocity of particle 2")
+    parser.add_argument("--e", type=float, help="Coefficient of restitution (Elasticity)")
+    parser.add_argument("--f", type=float, help="Friction coefficient")
+    return parser.parse_args()
 
 #active=-1 makes sure that all boxes remain white until they are clicked
 def drawParameterBoxes(parameters, active=-1):
@@ -57,7 +68,7 @@ def getBoxNumber(click_x, click_y, parameters):
             return i
         
     #didnt find a box--ignore the click    
-    return -1 
+    return -1  
 
 def getNumber(box, parameters):
     #input from keyboard when box is selected
@@ -114,7 +125,7 @@ def getParameters(parameters):
                 value = getNumber(box, parameters) 
                 
                 #only continue if the user has entered a number
-                if value is not None:  
+                if value is not None: 
                     # Update our list and the display text
                     #store it for the physics math
                     results[box] = value 
@@ -260,24 +271,32 @@ def runExperiment(m1, v1, m2, v2, e, f):
             return # Exit to menu
 
 def main():
-    #[label, x-position, y-position, width, height, min value, 
-    #max value, current-text]
-    parameters = [["Mass 1", 50, 100, 100, 30, 1, 100, ""], 
-                 ["Velocity 1", 50, 200, 100, 30, 0, 100, ""],
-                 ["Mass 2", 250, 100, 100, 30, 1, 100, ""],
-                 ["Velocity 2", 250, 200, 100, 30, 0, 100, ""],
-                 ["Elasticity", 450, 100, 100, 30, 0.0, 10.0, ""],
-                 ["Friction", 450, 200, 100, 30, 0.0, 5.0, ""],
-                 [" ", 250, 350, 100, 50, 0, 0, "GO"]]
+    args = parse_arguments()
     
-    Draw.setCanvasSize(1000, 600) 
-    while True:
+    # If parameters are passed via argparse, bypass the menu
+    if all(v is not None for v in [args.m1, args.v1, args.m2, args.v2, args.e, args.f]):
+        m1, v1, m2, v2, e, f = args.m1, args.v1, args.m2, args.v2, args.e, args.f
+        if v2 > 0:
+            v2 = v2 * -1 
+        elif v2 == 0:
+            v2 = -10.0 
+    else:
+        #[label, x-position, y-position, width, height, min value, 
+        #max value, current-text]
+        parameters = [["Mass 1", 50, 100, 100, 30, 1, 100, ""], 
+                       ["Velocity 1", 50, 200, 100, 30, 0, 100, ""],
+                       ["Mass 2", 250, 100, 100, 30, 1, 100, ""],
+                       ["Velocity 2", 250, 200, 100, 30, 0, 100, ""],
+                       ["Elasticity", 450, 100, 100, 30, 0.0, 10.0, ""],
+                       ["Friction", 450, 200, 100, 30, 0.0, 5.0, ""],
+                       [" ", 250, 350, 100, 50, 0, 0, "GO"]]
+        
+        Draw.setCanvasSize(1000, 600) 
         #get the list of numbers from the menu
         data = getParameters(parameters)
-        
-        # This takes the 6 items in the list and gives them names in order
         m1, v1, m2, v2, e, f = data
         
-        # start the experiment using those names
-        runExperiment(m1, v1, m2, v2, e, f)
-main() 
+    # start the experiment using those names
+    runExperiment(m1, v1, m2, v2, e, f)
+
+main()
