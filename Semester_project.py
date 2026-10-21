@@ -272,6 +272,8 @@ def runExperiment(m1, v1, m2, v2, e, f):
 
 def main():
     args = parse_arguments()
+
+    Draw.setCanvasSize(1000, 600)
     
     # If parameters are passed via argparse, bypass the menu
     if all(v is not None for v in [args.m1, args.v1, args.m2, args.v2, args.e, args.f]):
@@ -290,8 +292,7 @@ def main():
                        ["Elasticity", 450, 100, 100, 30, 0.0, 10.0, ""],
                        ["Friction", 450, 200, 100, 30, 0.0, 5.0, ""],
                        [" ", 250, 350, 100, 50, 0, 0, "GO"]]
-        
-        Draw.setCanvasSize(1000, 600) 
+         
         #get the list of numbers from the menu
         data = getParameters(parameters)
         m1, v1, m2, v2, e, f = data
